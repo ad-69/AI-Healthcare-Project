@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PMMVY Maternal IFA Portal - Dashboard</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Custom Styling -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ================= AUTHENTICATION PORTAL ================= -->
+  <div id="auth-container" class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <i class="fa-solid fa-hand-holding-heart brand-icon-large"></i>
+        <h2>PMMVY Maternal IFA Portal</h2>
+        <p>Government of India Scheme Verification &amp; IFA Supplementation Portal</p>
+      </div>
+
+      <!-- Portal Tabs Selector -->
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab-btn active" id="tab-btn-asha" onclick="switchAuthPortal('asha')">
+          <i class="fa-solid fa-user-doctor"></i> ASHA Worker
+        </button>
+        <button type="button" class="auth-tab-btn" id="tab-btn-beneficiary" onclick="switchAuthPortal('beneficiary')">
+          <i class="fa-solid fa-baby"></i> Beneficiary Mother
+        </button>
+      </div>
+
+      <!-- ASHA AUTH CARD -->
+      <div id="auth-section-asha" class="auth-section">
+        <!-- ASHA Login -->
+        <div id="asha-login-view" class="auth-view">
+          <h3>ASHA Worker Sign In</h3>
+          <form id="form-asha-login" class="interactive-form">
+            <div class="form-group">
+              <label for="asha-login-id">ASHA Employee Code or Mobile</label>
+              <input type="text" id="asha-login-id" placeholder="e.g. ASHA-ANITA or 9988776655" required>
+            </div>
+            <div class="form-group">
+              <label for="asha-login-password">Password</label>
+              <input type="password" id="asha-login-password" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+              <i class="fa-solid fa-right-to-bracket"></i> Sign In to Workbench
+            </button>
+            <div class="sso-divider" style="text-align: center; margin: 16px 0; color: var(--text-muted); font-size: 13px; position: relative;">
+              <span style="background: var(--card-bg); padding: 0 10px; position: relative; z-index: 1; border-radius: 4px;">OR</span>
+              <div style="position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: var(--border-color); z-index: 0;"></div>
+            </div>
+            <button type="button" class="btn btn-secondary btn-block" style="background: white; color: #333;" onclick="simulateSSOLogin('asha')">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" style="width: 16px; height: 16px; margin-right: 8px;" alt="G"> Sign in with Google
+            </button>
+            <div class="auth-toggle-link">
+              New ASHA Worker? <a href="#" onclick="toggleAuthMode('asha', 'signup')">Register here</a>
+            </div>
+          </form>
+        </div>
+
+        <!-- ASHA Sign Up -->
+        <div id="asha-signup-view" class="auth-view hidden">
+          <h3>ASHA Worker Registration</h3>
+          <form id="form-asha-signup" class="interactive-form">
+            <div class="form-group">
+              <label for="asha-signup-name">Full Name</label>
+              <input type="text" id="asha-signup-name" placeholder="e.g. Anita Sharma" required>
+            </div>
+            <div class="form-group-row">
+              <div class="form-group">
+                <label for="asha-signup-code">ASHA Employee Code</label>
+                <input type="text" id="asha-signup-code" placeholder="e.g. ASHA-12345" required>
+              </div>
+              <div class="form-group">
+                <label for="asha-signup-mobile">Mobile Number</label>
+                <input type="text" id="asha-signup-mobile" placeholder="e.g. 9876543210" required>
+              </div>
+            </div>
+            <div class="form-group-row">
+              <div class="form-group">
+                <label for="asha-signup-state">State</label>
+                <select id="asha-signup-state" required>
+                  <option value="Uttar Pradesh">Uttar Pradesh</option>
+                  <option value="Madhya Pradesh">Madhya Pradesh</option>
+                  <option value="Bihar">Bihar</option>
+                  <option value="Rajasthan">Rajasthan</option>
+                  <option value="Gujarat">Gujarat</option>
+                  <option value="West Bengal">West Bengal</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="asha-signup-district">District / Block</label>
+                <input type="text" id="asha-signup-district" placeholder="e.g. Hardoi" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="asha-signup-password">Choose Password</label>
+              <input type="password" id="asha-signup-password" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+              <i class="fa-solid fa-user-plus"></i> Complete ASHA Registration
+            </button>
+            <div class="auth-toggle-link">
+              Already registered? <a href="#" onclick="toggleAuthMode('asha', 'login')">Log in</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- BENEFICIARY AUTH CARD -->
+      <div id="auth-section-beneficiary" class="auth-section hidden">
+        <!-- Beneficiary Login -->
+        <div id="beneficiary-login-view" class="auth-view">
+          <h3>Beneficiary Sign In</h3>
+          <form id="form-beneficiary-login" class="interactive-form">
+            <div class="form-group">
+              <label for="ben-login-id">Aadhaar ID or Mobile Number</label>
+              <input type="text" id="ben-login-id" placeholder="e.g. 8996558305 or 5263 9372 8663" required>
+            </div>
+            <div class="form-group">
+              <label for="ben-login-password">Password</label>
+              <input type="password" id="ben-login-password" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+              <i class="fa-solid fa-right-to-bracket"></i> Access Mother's Dashboard
+            </button>
+            <div class="sso-divider" style="text-align: center; margin: 16px 0; color: var(--text-muted); font-size: 13px; position: relative;">
+              <span style="background: var(--card-bg); padding: 0 10px; position: relative; z-index: 1; border-radius: 4px;">OR</span>
+              <div style="position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: var(--border-color); z-index: 0;"></div>
+            </div>
+            <button type="button" class="btn btn-secondary btn-block" style="background: white; color: #333;" onclick="simulateSSOLogin('beneficiary')">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" style="width: 16px; height: 16px; margin-right: 8px;" alt="G"> Sign in with Google
+            </button>
+            <div class="auth-toggle-link">
+              New Beneficiary? <a href="#" onclick="toggleAuthMode('beneficiary', 'signup')">Register / Sign Up</a>
+            </div>
+          </form>
+        </div>
+
+        <!-- Beneficiary Sign Up -->
+        <div id="beneficiary-signup-view" class="auth-view hidden">
+          <h3>Register PMMVY Beneficiary Account</h3>
+          <form id="form-beneficiary-signup" class="interactive-form">
+            <div class="form-group">
+              <label for="ben-signup-name">Full Name</label>
+              <input type="text" id="ben-signup-name" placeholder="e.g. Radhika Sen" required>
+            </div>
+            <div class="form-group-row">
+              <div class="form-group">
+                <label for="ben-signup-aadhaar">Aadhaar Number</label>
+                <input type="text" id="ben-signup-aadhaar" placeholder="e.g. 1234 5678 9012" required>
+              </div>
+              <div class="form-group">
+                <label for="ben-signup-mobile">Mobile Number</label>
+                <input type="text" id="ben-signup-mobile" placeholder="e.g. 9988776655" required>
+              </div>
+            </div>
+            <div class="form-group-row">
+              <div class="form-group">
+                <label for="ben-signup-age">Age</label>
+                <input type="number" id="ben-signup-age" min="15" max="50" value="25" required>
+              </div>
+              <div class="form-group">
+                <label for="ben-signup-status">Maternal Status</label>
+                <select id="ben-signup-status" required>
+                  <option value="Pregnant">Pregnant</option>
+                  <option value="Lactating">Lactating</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group-row">
+              <div class="form-group">
+                <label for="ben-signup-hb">Hemoglobin Level (g/dL) <span class="required">*</span></label>
+                <input type="number" id="ben-signup-hb" step="0.1" min="3" max="20" value="11.0" required>
+              </div>
+              <div class="form-group">
+                <label for="ben-signup-state">State</label>
+                <select id="ben-signup-state" required>
+                  <option value="Uttar Pradesh">Uttar Pradesh</option>
+                  <option value="Madhya Pradesh">Madhya Pradesh</option>
+                  <option value="Bihar">Bihar</option>
+                  <option value="Rajasthan">Rajasthan</option>
+                  <option value="Gujarat">Gujarat</option>
+                  <option value="West Bengal">West Bengal</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group-row">
+              <div class="form-group">
+                <label for="ben-signup-village">Village Name</label>
+                <input type="text" id="ben-signup-village" placeholder="e.g. Sundargaon" required>
+              </div>
+              <div class="form-group">
+                <label for="ben-signup-password">Choose Password</label>
+                <input type="password" id="ben-signup-password" placeholder="••••••••" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="ben-signup-address">Detailed Address</label>
+              <input type="text" id="ben-signup-address" placeholder="House number, Street, Block..." required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+              <i class="fa-solid fa-user-plus"></i> Submit Registration &amp; Sign Up
+            </button>
+            <div class="auth-toggle-link">
+              Already have an account? <a href="#" onclick="toggleAuthMode('beneficiary', 'login')">Log in</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Quick credentials help for demo -->
+      <div class="demo-credentials-card">
+        <h5><i class="fa-solid fa-circle-info"></i> Demo Credentials &amp; Quick Login</h5>
+        <div class="credentials-flex" style="margin-bottom: 12px;">
+          <div><strong>ASHA:</strong> <code>9988776655</code> / <code>password</code></div>
+          <div><strong>Beneficiary:</strong> <code>8996558305</code> / <code>password</code></div>
+        </div>
+        <div class="credentials-actions" style="display: flex; gap: 8px;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="simulateSSOLogin('asha')" style="flex: 1; padding: 6px 10px; font-size: 11px;">
+            <i class="fa-solid fa-user-doctor"></i> Auto ASHA
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="simulateSSOLogin('beneficiary')" style="flex: 1; padding: 6px 10px; font-size: 11px;">
+            <i class="fa-solid fa-baby"></i> Auto Mother
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <i class="fa-solid fa-hand-holding-heart brand-icon"></i>
+        <div class="brand-text">
+          <h1>PMMVY Maternal</h1>
+          <span>IFA Tracker</span>
+        </div>
+      </div>
+      
+      <!-- ASHA Worker Sidebar Links -->
+      <nav class="sidebar-menu asha-only">
+        <a href="#dashboard" class="menu-item active" id="nav-dashboard">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="#beneficiaries" class="menu-item" id="nav-beneficiaries">
+          <i class="fa-solid fa-users"></i>
+          <span>Beneficiaries</span>
+        </a>
+        <a href="#asha" class="menu-item" id="nav-asha">
+          <i class="fa-solid fa-user-doctor"></i>
+          <span>ASHA Verification</span>
+        </a>
+        <a href="#payments" class="menu-item" id="nav-payments">
+          <i class="fa-solid fa-indian-rupee-sign"></i>
+          <span>Payments</span>
+        </a>
+        <a href="#reviews" class="menu-item" id="nav-reviews">
+          <i class="fa-solid fa-comment-medical"></i>
+          <span>Mothers' Feedback</span>
+        </a>
+        <a href="#medicines" class="menu-item" id="nav-medicines">
+          <i class="fa-solid fa-pills"></i>
+          <span>Medicine Inventory</span>
+        </a>
+      </nav>
+
+      <!-- Beneficiary Mother Sidebar Links -->
+      <nav class="sidebar-menu beneficiary-only">
+        <a href="#ben-dashboard" class="menu-item" id="nav-ben-dashboard">
+          <i class="fa-solid fa-house-medical"></i>
+          <span>My Health Tracker</span>
+        </a>
+        <a href="#ben-payments" class="menu-item" id="nav-ben-payments">
+          <i class="fa-solid fa-indian-rupee-sign"></i>
+          <span>My PMMVY DBT</span>
+        </a>
+        <a href="#ben-feedback" class="menu-item" id="nav-ben-feedback">
+          <i class="fa-solid fa-comment-medical"></i>
+          <span>Share Feedback</span>
+        </a>
+        <a href="#ben-medicines" class="menu-item" id="nav-ben-medicines">
+          <i class="fa-solid fa-book-medical"></i>
+          <span>Health Guide</span>
+        </a>
+        <a href="#ben-anemia" class="menu-item" id="nav-ben-anemia">
+          <i class="fa-solid fa-eye-dropper"></i>
+          <span>Anemia Test</span>
+        </a>
+        <a href="#ben-pill-scan" class="menu-item" id="nav-ben-pill-scan">
+          <i class="fa-solid fa-camera-rotate"></i>
+          <span>Scan Pill</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=60" alt="User Avatar" class="user-avatar" id="logged-user-avatar">
+          <div class="user-info">
+            <h4 id="logged-user-name">Anita Sharma</h4>
+            <span id="logged-user-role">District Admin</span>
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-sm btn-block" id="btn-logout" style="margin-top: 14px;">
+          <i class="fa-solid fa-right-from-bracket"></i> Log Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="content-header">
+        <div class="header-left">
+          <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="global-search" placeholder="Search beneficiary name, Aadhaar or mobile...">
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="theme-toggle" id="theme-toggle-btn" title="Toggle theme">
+            <i class="fa-solid fa-sun light-icon"></i>
+            <i class="fa-solid fa-moon dark-icon"></i>
+          </div>
+          <div class="notifications-btn" id="header-logout-btn" title="Log Out" style="color: var(--accent-red); border-color: rgba(244, 63, 94, 0.25);">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </div>
+          <div class="notifications-btn">
+            <i class="fa-regular fa-bell"></i>
+            <span class="notification-badge"></span>
+          </div>
+          <div class="live-status">
+            <span class="pulse-dot"></span>
+            <span>Live Server</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-body">
+        
+        <!-- ================= DASHBOARD SCREEN ================= -->
+        <section id="screen-dashboard" class="app-screen">
+          <div class="screen-header">
+            <h2>Executive Performance Summary</h2>
+            <p>Real-time analytics and tracking of Pradhan Mantri Matru Vandana Yojana &amp; Iron Folic Acid Supplementation.</p>
+          </div>
+          
+          <!-- KPI Summary Cards -->
+          <div class="kpi-grid">
+            <div class="kpi-card purple">
+              <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
+              <div class="kpi-data">
+                <span class="kpi-label">Registered Beneficiaries</span>
+                <h3 class="kpi-value" id="kpi-total-beneficiaries">0</h3>
+                <span class="kpi-subtext" id="kpi-pregnant-lactating-ratio">0 Pregnant / 0 Lactating</span>
+              </div>
+            </div>
+            <div class="kpi-card green">
+              <div class="kpi-icon"><i class="fa-solid fa-pills"></i></div>
+              <div class="kpi-data">
+                <span class="kpi-label">IFA Compliance Rate</span>
+                <h3 class="kpi-value" id="kpi-ifa-compliance">0%</h3>
+                <span class="kpi-subtext" id="kpi-pills-consumed-stat">0 / 0 pills consumed</span>
+              </div>
+            </div>
+            <div class="kpi-card blue">
+              <div class="kpi-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+              <div class="kpi-data">
+                <span class="kpi-label">Total Disbursed Benefits</span>
+                <h3 class="kpi-value" id="kpi-total-disbursed">₹0</h3>
+                <span class="kpi-subtext" id="kpi-successful-trans">0 Successful Transactions</span>
+              </div>
+            </div>
+            <div class="kpi-card red">
+              <div class="kpi-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+              <div class="kpi-data">
+                <span class="kpi-label">Severe Anemia Cases</span>
+                <h3 class="kpi-value" id="kpi-severe-anemia">0</h3>
+                <span class="kpi-subtext">Requires immediate intervention</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Row 1 -->
+          <div class="chart-row">
+            <div class="chart-container card">
+              <h3>Anemia Severity Distribution</h3>
+              <div class="chart-wrapper">
+                <canvas id="chart-anemia-severity"></canvas>
+              </div>
+            </div>
+            <div class="chart-container card">
+              <h3>IFA Consumption Rates</h3>
+              <div class="chart-wrapper">
+                <canvas id="chart-ifa-consumption"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Row 2 -->
+          <div class="chart-row">
+            <div class="chart-container card full-width">
+              <h3>State-wise Village Registration and Coverage</h3>
+              <div class="chart-wrapper-large">
+                <canvas id="chart-state-coverage"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-bottom-grid">
+            <!-- Recent Activities -->
+            <div class="card recent-activity-card">
+              <h3>Recent Supplemementation Logs</h3>
+              <div class="activity-list" id="recent-activities">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+            <!-- Top Testimonials -->
+            <div class="card top-feedback-card">
+              <h3>Top Maternal Feedbacks</h3>
+              <div class="feedback-carousel" id="top-feedback-list">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= BENEFICIARIES SCREEN ================= -->
+        <section id="screen-beneficiaries" class="app-screen hidden">
+          <div class="screen-header flex-header">
+            <div>
+              <h2>Beneficiary Directory</h2>
+              <p>View and manage profiles, checkup history, and payment progress for registered mothers.</p>
+            </div>
+            <div class="header-actions">
+              <button class="btn btn-primary" id="btn-add-beneficiary">
+                <i class="fa-solid fa-user-plus"></i> Add Beneficiary
+              </button>
+            </div>
+          </div>
+
+          <!-- Filter Toolbar -->
+          <div class="card filter-toolbar">
+            <div class="filter-group">
+              <label for="filter-state">State</label>
+              <select id="filter-state">
+                <option value="">All States</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="filter-status">Maternal Status</label>
+              <select id="filter-status">
+                <option value="">All Statuses</option>
+                <option value="Pregnant">Pregnant</option>
+                <option value="Lactating">Lactating</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="filter-anemia">Anemia Level</label>
+              <select id="filter-anemia">
+                <option value="">All Levels</option>
+                <option value="Normal">Normal (>=11 g/dL)</option>
+                <option value="Low">Mild (10-10.9 g/dL)</option>
+                <option value="Medium">Moderate (7-9.9 g/dL)</option>
+                <option value="Severe">Severe (<7 g/dL)</option>
+              </select>
+            </div>
+            <div class="filter-group reset-filter-wrapper">
+              <button class="btn btn-secondary" id="btn-reset-filters">
+                <i class="fa-solid fa-filter-circle-xmark"></i> Reset
+              </button>
+            </div>
+          </div>
+
+          <!-- Beneficiary List Card -->
+          <div class="card table-card">
+            <div class="table-responsive">
+              <table class="data-table" id="beneficiaries-table">
+                <thead>
+                  <tr>
+                    <th>Beneficiary ID</th>
+                    <th>Name</th>
+                    <th>State &amp; Village</th>
+                    <th>Age</th>
+                    <th>Status</th>
+                    <th>Hb Level</th>
+                    <th>Anemia Status</th>
+                    <th>Pills Dos.</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="beneficiaries-table-body">
+                  <!-- Loaded dynamically -->
+                </tbody>
+              </table>
+            </div>
+            <div class="table-pagination" id="beneficiaries-pagination">
+              <!-- Loaded dynamically -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= ASHA VERIFICATION SCREEN ================= -->
+        <section id="screen-asha" class="app-screen hidden">
+          <div class="screen-header">
+            <h2>ASHA Supplementation Workbench</h2>
+            <p>Log prenatal and postnatal visits, update hemoglobin levels, and verify IFA pill consumption compliance.</p>
+          </div>
+
+          <div class="asha-grid">
+            <!-- Pending Verification Panel -->
+            <div class="card verification-panel">
+              <div class="panel-header-badge">
+                <h3>Log Antenatal / Postnatal Visit</h3>
+                <span class="badge badge-accent">New Entry</span>
+              </div>
+              <form id="form-log-visit" class="interactive-form">
+                <div class="form-group-row">
+                  <div class="form-group">
+                    <label for="visit-beneficiary-id">Select Beneficiary <span class="required">*</span></label>
+                    <select id="visit-beneficiary-id" required>
+                      <option value="">-- Choose Beneficiary --</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="visit-date">Visit Date <span class="required">*</span></label>
+                    <input type="date" id="visit-date" required>
+                  </div>
+                </div>
+
+                <div class="form-group-row">
+                  <div class="form-group">
+                    <label for="visit-period">Period / Trimester <span class="required">*</span></label>
+                    <select id="visit-period" required>
+                      <option value="Trimester 1">Trimester 1</option>
+                      <option value="Trimester 2">Trimester 2</option>
+                      <option value="Trimester 3">Trimester 3</option>
+                      <option value="Postnatal">Postnatal</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="visit-pill-id">Tablet Distributed <span class="required">*</span></label>
+                    <select id="visit-pill-id" required>
+                      <option value="1">IFA Blue Tablet (Prophylactic)</option>
+                      <option value="2">IFA Red Tablet (Therapeutic)</option>
+                      <option value="3">Fefol-Z (Prophylactic)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group-row">
+                  <div class="form-group">
+                    <label for="visit-pills-distributed">Pills Distributed <span class="required">*</span></label>
+                    <input type="number" id="visit-pills-distributed" min="1" max="180" value="30" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="visit-pills-consumed">Pills Consumed <span class="required">*</span></label>
+                    <input type="number" id="visit-pills-consumed" min="0" max="180" value="0" required>
+                  </div>
+                </div>
+
+                <div class="form-group-row">
+                  <div class="form-group">
+                    <label for="visit-hb-level">Measured Hemoglobin (g/dL)</label>
+                    <input type="number" id="visit-hb-level" step="0.1" min="3" max="20" placeholder="e.g. 11.2">
+                  </div>
+                  <div class="form-group">
+                    <label for="visit-verification">Verification Status <span class="required">*</span></label>
+                    <select id="visit-verification" required>
+                      <option value="Pending">Pending Verification</option>
+                      <option value="Consumed">Verified Consumed</option>
+                      <option value="Not Consumed">Verified Not Consumed</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="visit-notes">ASHA Remarks &amp; Counseling Notes</label>
+                  <textarea id="visit-notes" placeholder="Reported symptoms, side effects, dietary advice, etc."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                  <i class="fa-solid fa-floppy-disk"></i> Log Checkup Visit &amp; Save
+                </button>
+              </form>
+            </div>
+
+            <!-- Verification List Card -->
+            <div class="card verification-list-panel">
+              <h3>Pending IFA Verification List</h3>
+              <p class="panel-subtext">Click actions on records below to confirm if the beneficiary consumed the distributed pills.</p>
+              <div class="verification-list-scroll">
+                <div class="verification-list" id="pending-verifications">
+                  <!-- Loaded dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= PAYMENTS SCREEN ================= -->
+        <section id="screen-payments" class="app-screen hidden">
+          <div class="screen-header">
+            <h2>PMMVY Cash Benefits Disbursements</h2>
+            <p>Monitor Direct Benefit Transfers (DBT), installment payments, and transaction history under the PMMVY program.</p>
+          </div>
+
+          <!-- Payments Breakdown Cards -->
+          <div class="payment-installments-row">
+            <div class="installment-card flex-grow">
+              <span class="installment-number">Installment 1</span>
+              <h3>₹1,000</h3>
+              <p>First Antenatal Checkup registration</p>
+              <div class="progress-bar-container">
+                <div class="progress-bar" id="payment-i1-progress" style="width: 0%"></div>
+              </div>
+              <span class="progress-text" id="payment-i1-disbursed">₹0 Disbursed</span>
+            </div>
+            <div class="installment-card flex-grow">
+              <span class="installment-number">Installment 2</span>
+              <h3>₹2,000</h3>
+              <p>At 6 months pregnancy milestone</p>
+              <div class="progress-bar-container">
+                <div class="progress-bar" id="payment-i2-progress" style="width: 0%"></div>
+              </div>
+              <span class="progress-text" id="payment-i2-disbursed">₹0 Disbursed</span>
+            </div>
+            <div class="installment-card flex-grow">
+              <span class="installment-number">Installment 3</span>
+              <h3>₹2,000</h3>
+              <p>Child birth registration &amp; primary immunizations</p>
+              <div class="progress-bar-container">
+                <div class="progress-bar" id="payment-i3-progress" style="width: 0%"></div>
+              </div>
+              <span class="progress-text" id="payment-i3-disbursed">₹0 Disbursed</span>
+            </div>
+          </div>
+
+          <div class="payment-analysis-grid">
+            <div class="card payment-table-card">
+              <h3>Recent DBT Transactions</h3>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Transaction ID</th>
+                      <th>Beneficiary</th>
+                      <th>Installment</th>
+                      <th>Amount</th>
+                      <th>Date</th>
+                      <th>Payment Mode</th>
+                      <th>Status</th>
+                      <th>Reference No</th>
+                    </tr>
+                  </thead>
+                  <tbody id="transactions-table-body">
+                    <!-- Loaded dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card payment-chart-card">
+              <h3>State-wise Disbursed Benefits</h3>
+              <div class="chart-wrapper">
+                <canvas id="chart-state-payments"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= REVIEWS SCREEN ================= -->
+        <section id="screen-reviews" class="app-screen hidden">
+          <div class="screen-header">
+            <h2>Mothers' Experience &amp; Testimonials</h2>
+            <p>Read honest reviews, ratings, and feedback shared by beneficiaries regarding ASHA visits and benefit distribution.</p>
+          </div>
+
+          <div class="reviews-split-grid">
+            <!-- Review submission form -->
+            <div class="card review-form-card">
+              <h3>Submit Beneficiary Feedback</h3>
+              <p class="card-subtitle">Log feedback received from a beneficiary directly or via post-natal tracking.</p>
+              <form id="form-submit-review" class="interactive-form">
+                <div class="form-group">
+                  <label for="review-beneficiary-id">Select Beneficiary <span class="required">*</span></label>
+                  <select id="review-beneficiary-id" required>
+                    <option value="">-- Choose Beneficiary --</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Service Rating <span class="required">*</span></label>
+                  <div class="star-rating">
+                    <input type="radio" id="star5" name="review-rating" value="5" required><label for="star5" title="5 stars"></label>
+                    <input type="radio" id="star4" name="review-rating" value="4"><label for="star4" title="4 stars"></label>
+                    <input type="radio" id="star3" name="review-rating" value="3"><label for="star3" title="3 stars"></label>
+                    <input type="radio" id="star2" name="review-rating" value="2"><label for="star2" title="2 stars"></label>
+                    <input type="radio" id="star1" name="review-rating" value="1"><label for="star1" title="1 star"></label>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="review-text">Feedback / Testimonial <span class="required">*</span></label>
+                  <textarea id="review-text" rows="5" placeholder="Share experience about ASHA worker support, IFA compliance, portal ease, and cash transfer receipts..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                  <i class="fa-solid fa-paper-plane"></i> Submit Feedback
+                </button>
+              </form>
+            </div>
+
+            <!-- List of Reviews -->
+            <div class="card reviews-list-card">
+              <div class="reviews-summary-bar">
+                <h3>All Reviews</h3>
+                <div class="rating-badge">
+                  <span id="reviews-avg-rating">4.8</span>
+                  <i class="fa-solid fa-star"></i>
+                  <span class="count" id="reviews-count">(0)</span>
+                </div>
+              </div>
+              <div class="reviews-scroll-list" id="reviews-list-container">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= MEDICINES SCREEN ================= -->
+        <section id="screen-medicines" class="app-screen hidden">
+          <div class="screen-header">
+            <h2>Government IFA Formulary &amp; Inventory</h2>
+            <p>Official list of Iron and Folic Acid supplements distributed through sub-centers and Anganwadi centers.</p>
+          </div>
+
+          <div class="medicines-grid">
+            <div class="medicines-list-container" id="medicines-list">
+              <!-- Loaded dynamically -->
+            </div>
+
+            <!-- IFA Calculator -->
+            <div class="card medicine-calculator-card">
+              <div class="card-icon-header">
+                <i class="fa-solid fa-calculator"></i>
+                <h3>IFA Dosage Guide</h3>
+              </div>
+              <p>Select beneficiary status and Measured Hemoglobin level to get recommended IFA pills and dosage recommendations under the national Anemia Mukt Bharat guidelines.</p>
+              
+              <div class="interactive-form">
+                <div class="form-group">
+                  <label for="calc-status">Status</label>
+                  <select id="calc-status">
+                    <option value="Pregnant">Pregnant</option>
+                    <option value="Lactating">Lactating</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="calc-hb">Measured Hemoglobin (g/dL)</label>
+                  <input type="number" id="calc-hb" step="0.1" min="3" max="20" value="11.0">
+                </div>
+                <button class="btn btn-primary btn-block" id="btn-calculate-dosage">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i> Get Clinical Guidelines
+                </button>
+              </div>
+
+              <div class="calculator-result hidden" id="calc-result">
+                <h4>Recommended Treatment Scheme</h4>
+                <div class="result-badge" id="calc-result-anemia-status">Mild Anemia</div>
+                
+                <div class="result-detail">
+                  <span class="label">Pill Category:</span>
+                  <span class="val" id="calc-result-pill-type">IFA Red Tablet</span>
+                </div>
+                <div class="result-detail">
+                  <span class="label">Daily Dosage:</span>
+                  <span class="val" id="calc-result-dosage">1 Tablet daily for 180 days</span>
+                </div>
+                <div class="result-detail">
+                  <span class="label">Active Ingredients:</span>
+                  <span class="val" id="calc-result-ingredients">Ferrous Sulphate (100mg elemental iron) + Folic Acid (500mcg)</span>
+                </div>
+                <div class="result-detail advisory" id="calc-result-advisory">
+                  <strong>Advisory:</strong> Counsel beneficiary to consume tablet with lemon water (vitamin C) to enhance absorption. Avoid tea or milk within an hour of taking pills.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= BENEFICIARY DASHBOARD SCREEN ================= -->
+        <section id="screen-ben-dashboard" class="app-screen hidden">
+          <div class="screen-header flex-header">
+            <div>
+              <h2 id="ben-welcome-title">Welcome Mother!</h2>
+              <p>Your maternal health tracker, IFA compliance status, and clinical guidelines.</p>
+            </div>
+            <div class="live-status">
+              <span class="pulse-dot"></span>
+              <span>Health Status Active</span>
+            </div>
+          </div>
+
+          <div class="kpi-grid">
+            <div class="kpi-card blue">
+              <div class="kpi-icon"><i class="fa-solid fa-stethoscope"></i></div>
+              <div class="kpi-data">
+                <span class="kpi-label">Your Hemoglobin Level</span>
+                <h3 class="kpi-value" id="ben-kpi-hb">0.0 g/dL</h3>
+                <span class="kpi-subtext" id="ben-kpi-anemia-status">Normal</span>
+              </div>
+            </div>
+            <div class="kpi-card green">
+              <div class="kpi-icon"><i class="fa-solid fa-calendar-check"></i></div>
+              <div class="kpi-data">
+                <span class="kpi-label">IFA Compliance Rate</span>
+                <h3 class="kpi-value" id="ben-kpi-compliance">0%</h3>
+                <span class="kpi-subtext" id="ben-kpi-pill-ratio">0 / 0 pills taken</span>
+              </div>
+            </div>
+            <div class="kpi-card purple">
+              <div class="kpi-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+              <div class="kpi-data">
+                <span class="kpi-label">PMMVY DBT Progress</span>
+                <h3 class="kpi-value" id="ben-kpi-payments">₹0 Received</h3>
+                <span class="kpi-subtext" id="ben-kpi-installments-text">0/3 Installments Paid</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Severe Anemia Alert -->
+          <div id="ben-severe-anemia-alert" class="alert-box danger hidden" style="margin-bottom: 24px;">
+            <i class="fa-solid fa-circle-exclamation alert-icon"></i>
+            <div class="alert-content">
+              <h4>🔴 Urgent Medical Referral Required</h4>
+              <p>Your Hemoglobin level indicates <strong>Severe Anemia</strong>. Please consult a doctor, obstetrician, or visit the nearest Community Health Center (CHC) or District Hospital immediately. Severe anemia can carry health risks for you and your baby.</p>
+            </div>
+          </div>
+
+          <div class="asha-grid">
+            <!-- Daily Compliance Logger -->
+            <div class="card verification-panel">
+              <div class="panel-header-badge">
+                <h3>Daily IFA Pill Logger</h3>
+                <span class="badge badge-accent">Daily Tracker</span>
+              </div>
+              <div style="text-align: center; padding: 20px 10px;">
+                <div class="compliance-ring-container" style="margin-bottom: 20px;">
+                  <div class="compliance-ring" style="font-size: 48px; font-weight: 800; color: var(--accent-green);">
+                    <i class="fa-solid fa-pills" style="font-size: 64px; display: block; margin-bottom: 12px; color: var(--accent-purple);"></i>
+                  </div>
+                </div>
+                <h4>Did you take your IFA pill today?</h4>
+                <p style="color: var(--text-secondary); margin: 8px 0 24px 0; font-size: 13px;">Daily intake of Iron and Folic Acid (IFA) is crucial to prevent maternal anemia and support child development.</p>
+                <button class="btn btn-primary btn-block" id="btn-log-compliance-today">
+                  <i class="fa-solid fa-check"></i> Yes, I took my pill today!
+                </button>
+              </div>
+            </div>
+
+            <!-- Personalized Dosage Guide -->
+            <div class="card medicine-calculator-card">
+              <div class="card-icon-header">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <h3>Your Personalized Dosage Guideline</h3>
+              </div>
+              <div id="ben-dosage-card-details" class="calculator-result" style="display: block; margin-top: 10px;">
+                <h4 style="margin-bottom: 8px;" id="ben-dose-scheme">Treatment Scheme</h4>
+                <div class="result-badge Normal" id="ben-dose-anemia-badge">Normal Anemia</div>
+                
+                <div class="result-detail">
+                  <span class="label">Pill Category:</span>
+                  <span class="val" id="ben-dose-pill-type">IFA Red Tablet</span>
+                </div>
+                <div class="result-detail">
+                  <span class="label">Recommended Daily Dosage:</span>
+                  <span class="val" id="ben-dose-dosage">1 Tablet daily for 180 days</span>
+                </div>
+                <div class="result-detail">
+                  <span class="label">Composition:</span>
+                  <span class="val" id="ben-dose-composition">Ferrous Sulphate (100mg elemental iron) + Folic Acid (500mcg)</span>
+                </div>
+                <div class="result-detail advisory" id="ben-dose-advisory">
+                  <strong>Advisory:</strong> Take with lemon water (vitamin C) to enhance absorption. Avoid tea, coffee, or milk within an hour of taking pills.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= BENEFICIARY PAYMENTS SCREEN ================= -->
+        <section id="screen-ben-payments" class="app-screen hidden">
+          <div class="screen-header">
+            <h2>My PMMVY Benefits (Direct Benefit Transfer)</h2>
+            <p>Track cash benefits disbursements transferred directly to your bank account under the Pradhan Mantri Matru Vandana Yojana.</p>
+          </div>
+
+          <div class="payment-installments-row">
+            <div class="installment-card flex-grow" id="ben-inst-1-card">
+              <span class="installment-number">Installment 1</span>
+              <h3>₹1,000</h3>
+              <p>Disbursed upon early registration of pregnancy &amp; first ANC checkup.</p>
+              <div class="progress-bar-container">
+                <div class="progress-bar" id="ben-inst-1-progress" style="width: 0%"></div>
+              </div>
+              <span class="progress-text" id="ben-inst-1-status">Status: Locked</span>
+            </div>
+            <div class="installment-card flex-grow" id="ben-inst-2-card">
+              <span class="installment-number">Installment 2</span>
+              <h3>₹2,000</h3>
+              <p>Disbursed after 6 months of pregnancy milestone &amp; receiving at least 1 ANC checkup.</p>
+              <div class="progress-bar-container">
+                <div class="progress-bar" id="ben-inst-2-progress" style="width: 0%"></div>
+              </div>
+              <span class="progress-text" id="ben-inst-2-status">Status: Locked</span>
+            </div>
+            <div class="installment-card flex-grow" id="ben-inst-3-card">
+              <span class="installment-number">Installment 3</span>
+              <h3>₹2,000</h3>
+              <p>Disbursed after child birth registration &amp; first cycle of immunizations.</p>
+              <div class="progress-bar-container">
+                <div class="progress-bar" id="ben-inst-3-progress" style="width: 0%"></div>
+              </div>
+              <span class="progress-text" id="ben-inst-3-status">Status: Locked</span>
+            </div>
+          </div>
+
+          <div class="card payment-table-card">
+            <h3 style="padding: 20px 24px; border-bottom: 1px solid var(--border-color);">My DBT Transactions History</h3>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Transaction ID</th>
+                    <th>Installment</th>
+                    <th>Amount</th>
+                    <th>Transfer Date</th>
+                    <th>Payment Mode</th>
+                    <th>Status</th>
+                    <th>Reference No</th>
+                  </tr>
+                </thead>
+                <tbody id="ben-transactions-table-body">
+                  <!-- Dynamically loaded -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= BENEFICIARY FEEDBACK SCREEN ================= -->
+        <section id="screen-ben-feedback" class="app-screen hidden">
+          <div class="screen-header">
+            <h2>Share My Experience</h2>
+            <p>Help us improve services! Submit reviews and feedback regarding ASHA home visits, IFA pill distributions, and PMMVY benefits distribution.</p>
+          </div>
+
+          <div class="reviews-split-grid">
+            <div class="card review-form-card">
+              <h3>Submit My Feedback</h3>
+              <p class="card-subtitle">Your rating and feedback is shared with district health monitors to verify ASHA performance.</p>
+              <form id="form-ben-submit-review" class="interactive-form">
+                <div class="form-group">
+                  <label>Overall Service Rating <span class="required">*</span></label>
+                  <div class="star-rating">
+                    <input type="radio" id="ben-star5" name="ben-review-rating" value="5" required><label for="ben-star5" title="5 stars"></label>
+                    <input type="radio" id="ben-star4" name="ben-review-rating" value="4"><label for="ben-star4" title="4 stars"></label>
+                    <input type="radio" id="ben-star3" name="ben-review-rating" value="3"><label for="ben-star3" title="3 stars"></label>
+                    <input type="radio" id="ben-star2" name="ben-review-rating" value="2"><label for="ben-star2" title="2 stars"></label>
+                    <input type="radio" id="ben-star1" name="ben-review-rating" value="1"><label for="ben-star1" title="1 star"></label>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="ben-review-text">My Review &amp; Comments <span class="required">*</span></label>
+                  <textarea id="ben-review-text" rows="5" placeholder="Comment on ASHA support, IFA pill taste or side effects, and portal ease..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                  <i class="fa-solid fa-paper-plane"></i> Submit Feedback
+                </button>
+              </form>
+            </div>
+
+            <div class="card reviews-list-card">
+              <h3>My Submitted Feedback History</h3>
+              <div class="reviews-scroll-list" id="ben-reviews-list-container" style="margin-top: 16px;">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= BENEFICIARY MEDICINES & HEALTH GUIDE SCREEN ================= -->
+        <section id="screen-ben-medicines" class="app-screen hidden">
+          <div class="screen-header">
+            <h2>Maternal Health &amp; IFA Dosage Reference Guide</h2>
+            <p>Explore recommended guidelines for IFA supplements consumption, managing side effects, and checking hypothetical dosage guidelines using our calculator.</p>
+          </div>
+
+          <div class="medicines-grid">
+            <div class="medicines-list-container">
+              <!-- Informational blocks -->
+              <div class="card">
+                <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px; color: var(--accent-purple);"><i class="fa-solid fa-circle-check" style="margin-right: 8px;"></i> Essential IFA Intake Guidelines</h3>
+                <ul style="margin-left: 20px; font-size: 14px; line-height: 1.8; color: var(--text-secondary);">
+                  <li>Always consume the IFA tablet <strong>after meals</strong> (e.g. after dinner) to minimize mild side effects like nausea or stomach discomfort.</li>
+                  <li>Drink a glass of <strong>lemon water</strong> or orange juice (Vitamin C) with the pill to dramatically enhance iron absorption.</li>
+                  <li><strong>Avoid taking the pill with tea, coffee, or milk</strong>, as calcium and tannins block iron absorption in the gut. Wait at least 1-2 hours before or after.</li>
+                  <li>Do not worry if your stools appear dark/black. This is a completely harmless, normal result of unabsorbed iron.</li>
+                </ul>
+              </div>
+
+              <div class="card">
+                <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px; color: var(--accent-green);"><i class="fa-solid fa-carrot" style="margin-right: 8px;"></i> Recommended Iron-Rich Foods</h3>
+                <p style="font-size: 14px; line-height: 1.6; color: var(--text-secondary); margin-bottom: 12px;">Complement your daily IFA supplements with foods rich in natural iron and folic acid:</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px; color: var(--text-secondary);">
+                  <div>🥦 <strong>Green Leafy Vegetables:</strong> Spinach, fenugreek (methi), amaranth.</div>
+                  <div>🍇 <strong>Fruits &amp; Nuts:</strong> Pomegranates, dates, figs, raisins, almonds.</div>
+                  <div>🌾 <strong>Grains &amp; Legumes:</strong> Chickpeas, lentils, millets (ragi), beans.</div>
+                  <div>🍯 <strong>Natural Sweets:</strong> Jaggery (gur) and sesame seeds.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dosage Reference Calculator -->
+            <div class="card medicine-calculator-card">
+              <div class="card-icon-header">
+                <i class="fa-solid fa-calculator"></i>
+                <h3>Dosage Reference Calculator</h3>
+              </div>
+              <p>Check the national Anemia Mukt Bharat guidelines for different health conditions by selecting status and hemoglobin levels below.</p>
+              
+              <div class="interactive-form">
+                <div class="form-group">
+                  <label for="ben-calc-status">Maternal Status</label>
+                  <select id="ben-calc-status">
+                    <option value="Pregnant">Pregnant</option>
+                    <option value="Lactating">Lactating</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="ben-calc-hb">Hemoglobin Level (g/dL)</label>
+                  <input type="number" id="ben-calc-hb" step="0.1" min="3" max="20" value="11.0">
+                </div>
+                <button class="btn btn-primary btn-block" id="btn-ben-calculate-dosage">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i> Calculate Recommended Dosage
+                </button>
+              </div>
+
+              <div class="calculator-result hidden" id="ben-calc-result">
+                <h4>Clinical Treatment Guideline</h4>
+                <div class="result-badge" id="ben-calc-result-anemia-status">Mild Anemia</div>
+                
+                <div class="result-detail">
+                  <span class="label">Supplement:</span>
+                  <span class="val" id="ben-calc-result-pill-type">IFA Red Tablet</span>
+                </div>
+                <div class="result-detail">
+                  <span class="label">Daily Dosage:</span>
+                  <span class="val" id="ben-calc-result-dosage">1 Tablet daily for 180 days</span>
+                </div>
+                <div class="result-detail">
+                  <span class="label">Composition:</span>
+                  <span class="val" id="ben-calc-result-ingredients">Ferrous Sulphate + Folic Acid</span>
+                </div>
+                <div class="result-detail advisory" id="ben-calc-result-advisory">
+                  <strong>Referral Advice:</strong> If severe anemia is detected, please refer the mother immediately to a medical officer.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= BENEFICIARY ANEMIA TEST SCREEN ================= -->
+        <section id="screen-ben-anemia" class="app-screen hidden">
+          <div class="screen-header">
+            <h2>Anemia Risk Assessment</h2>
+            <p>Answer the following questions to check your potential anemia risk and get a dosage recommendation.</p>
+          </div>
+          <div class="card" style="max-width: 600px; margin: 0 auto; text-align: left;">
+            <form id="form-anemia-quiz" class="interactive-form">
+              <div class="form-group">
+                <label>1. Do you often feel tired, weak, or exhausted during normal activities?</label>
+                <select id="quiz-q1" required>
+                  <option value="">-- Select --</option>
+                  <option value="high">Yes, very often</option>
+                  <option value="medium">Sometimes</option>
+                  <option value="low">Rarely or Never</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>2. Do you experience dizziness, shortness of breath, or headaches?</label>
+                <select id="quiz-q2" required>
+                  <option value="">-- Select --</option>
+                  <option value="high">Yes, frequently</option>
+                  <option value="medium">Occasionally</option>
+                  <option value="low">No</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>3. Do your inner eyelids, gums, or nails look pale instead of pink?</label>
+                <select id="quiz-q3" required>
+                  <option value="">-- Select --</option>
+                  <option value="high">Yes, they are pale</option>
+                  <option value="medium">Slightly pale / not sure</option>
+                  <option value="low">No, they are healthy pink</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block" style="margin-top: 15px;">
+                <i class="fa-solid fa-stethoscope"></i> Get Assessment Result
+              </button>
+            </form>
+
+            <div id="anemia-quiz-result" class="calculator-result hidden" style="margin-top: 20px;">
+              <h4>Assessment Result</h4>
+              <div class="result-badge" id="anemia-quiz-badge"></div>
+              
+              <div class="result-detail" style="margin-top: 15px;">
+                <span class="label">Recommended Pill:</span>
+                <span class="val" id="anemia-quiz-pill"></span>
+              </div>
+              <div class="result-detail">
+                <span class="label">Dosage:</span>
+                <span class="val" id="anemia-quiz-dosage"></span>
+              </div>
+              <div class="result-detail advisory" id="anemia-quiz-advisory">
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= BENEFICIARY PILL SCANNER SCREEN ================= -->
+        <section id="screen-ben-pill-scan" class="app-screen hidden">
+          <div class="screen-header">
+            <h2>Smart IFA Pill Verification</h2>
+            <p>Scan your IFA supplement pack to ensure you are taking the correct prescribed dosage.</p>
+          </div>
+          <div class="card" style="max-width: 600px; margin: 0 auto; text-align: center;">
+            <div id="pill-camera-view" style="background: #000; border-radius: 12px; height: 300px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; margin-bottom: 20px;">
+              <video id="pill-video-stream" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; display: none; position: absolute; z-index: 1;"></video>
+              <canvas id="pill-canvas" style="width: 100%; height: 100%; object-fit: cover; display: none; position: absolute; z-index: 1;"></canvas>
+              <i class="fa-solid fa-pills" id="pill-placeholder-icon" style="color: #444; font-size: 48px; position: relative; z-index: 1;"></i>
+              <div id="pill-scan-laser" class="hidden" style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); animation: scan 2s infinite linear; z-index: 3;"></div>
+            </div>
+            <button id="btn-start-pill-scan" class="btn btn-primary btn-block" style="margin-bottom: 20px;">
+              <i class="fa-solid fa-camera"></i> Start Camera
+            </button>
+            <div id="pill-scan-result" class="calculator-result hidden">
+              <h4>Verification Result</h4>
+              <div class="result-badge Normal" id="pill-scan-badge" style="background: rgba(16, 185, 129, 0.12); color: var(--accent-green);">
+                <i class="fa-solid fa-circle-check"></i> Verified: IFA Red Tablet
+              </div>
+              <p id="pill-scan-message" style="font-size: 13px; color: var(--text-secondary); margin-top: 10px;">This matches your prescribed dosage. Safe to consume!</p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Beneficiary Detail Modal -->
+  <div class="modal-overlay hidden" id="beneficiary-modal">
+    <div class="modal-card">
+      <button class="modal-close" id="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
+      
+      <div class="modal-header">
+        <h2 id="modal-name">Sita Ram</h2>
+        <span class="badge" id="modal-status">Pregnant</span>
+      </div>
+
+      <div class="modal-body-scroll">
+        <div class="modal-info-grid">
+          <div class="info-block">
+            <span class="lbl">Beneficiary ID</span>
+            <span class="val" id="modal-id">-</span>
+          </div>
+          <div class="info-block">
+            <span class="lbl">Aadhaar ID</span>
+            <span class="val" id="modal-aadhaar">-</span>
+          </div>
+          <div class="info-block">
+            <span class="lbl">Mobile</span>
+            <span class="val" id="modal-mobile">-</span>
+          </div>
+          <div class="info-block">
+            <span class="lbl">Age</span>
+            <span class="val" id="modal-age">-</span>
+          </div>
+          <div class="info-block double-width">
+            <span class="lbl">State &amp; Village</span>
+            <span class="val" id="modal-state-village">-</span>
+          </div>
+          <div class="info-block double-width">
+            <span class="lbl">Address</span>
+            <span class="val" id="modal-address">-</span>
+          </div>
+        </div>
+
+        <div class="modal-section">
+          <h3>IFA Supplementation &amp; Follow-Up Log</h3>
+          <div class="table-responsive">
+            <table class="data-table small">
+              <thead>
+                <tr>
+                  <th>Period</th>
+                  <th>Visit Date</th>
+                  <th>Hb Level</th>
+                  <th>Anemia Status</th>
+                  <th>Pills Dist.</th>
+                  <th>Pills Cons.</th>
+                  <th>Verification</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody id="modal-supp-records">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="modal-section">
+          <h3>PMMVY Benefit Installments (DBT)</h3>
+          <div class="table-responsive">
+            <table class="data-table small">
+              <thead>
+                <tr>
+                  <th>Installment</th>
+                  <th>Amount</th>
+                  <th>Date</th>
+                  <th>Reference No</th>
+                  <th>Payment Mode</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="modal-transactions">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Beneficiary Modal -->
+  <div class="modal-overlay hidden" id="add-beneficiary-modal">
+    <div class="modal-card small">
+      <button class="modal-close" id="btn-close-add-modal"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header">
+        <h2>Register New Beneficiary</h2>
+      </div>
+      <form id="form-add-beneficiary" class="interactive-form">
+        <div class="form-group">
+          <label for="new-name">Full Name <span class="required">*</span></label>
+          <input type="text" id="new-name" placeholder="e.g. Radhika Sen" required>
+        </div>
+        <div class="form-group-row">
+          <div class="form-group">
+            <label for="new-state">State <span class="required">*</span></label>
+            <select id="new-state" required>
+              <option value="Uttar Pradesh">Uttar Pradesh</option>
+              <option value="Madhya Pradesh">Madhya Pradesh</option>
+              <option value="Bihar">Bihar</option>
+              <option value="Rajasthan">Rajasthan</option>
+              <option value="Gujarat">Gujarat</option>
+              <option value="West Bengal">West Bengal</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="new-village">Village Name <span class="required">*</span></label>
+            <input type="text" id="new-village" placeholder="e.g. Sundargaon" required>
+          </div>
+        </div>
+        <div class="form-group-row">
+          <div class="form-group">
+            <label for="new-age">Age <span class="required">*</span></label>
+            <input type="number" id="new-age" min="15" max="50" value="25" required>
+          </div>
+          <div class="form-group">
+            <label for="new-status">Maternal Status <span class="required">*</span></label>
+            <select id="new-status" required>
+              <option value="Pregnant">Pregnant</option>
+              <option value="Lactating">Lactating</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group-row">
+          <div class="form-group">
+            <label for="new-mobile">Mobile Number <span class="required">*</span></label>
+            <input type="text" id="new-mobile" placeholder="e.g. 9988776655" required>
+          </div>
+          <div class="form-group">
+            <label for="new-aadhaar">Aadhaar Number <span class="required">*</span></label>
+            <input type="text" id="new-aadhaar" placeholder="e.g. 1234 5678 9012" required>
+          </div>
+        </div>
+        <div class="form-group-row">
+          <div class="form-group">
+            <label for="new-hb">Hemoglobin Level (g/dL) <span class="required">*</span></label>
+            <input type="number" id="new-hb" step="0.1" min="3" max="20" value="11.0" required>
+          </div>
+          <div class="form-group">
+            <label for="new-dosage">IFA Dos. (Pills)</label>
+            <input type="number" id="new-dosage" min="0" value="100">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="new-address">Detailed Address <span class="required">*</span></label>
+          <input type="text" id="new-address" placeholder="House number, Street, Block, District..." required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">
+          <i class="fa-solid fa-user-check"></i> Register and Generate ID
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Load Data and Logic -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
