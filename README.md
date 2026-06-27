@@ -1,2 +1,2 @@
 # AI-Healthcare-Project
-A vibecoding project that enhances healthcare access in rural areas of India. My project specifically focuses on the verification and supplementation of Iron Folic Acid Pills to Pregnant and Lactating Women. It highlights two main issues, i.e. verifying whether the pill is the right dosage and ensuring women know their level of anemia. 
+A vibecoding project that improves healthcare access in rural India by supporting the verification and supplementation of Iron Folic Acid (IFA) tablets for pregnant and lactating women. The project tackles two critical issues: confirming that the correct IFA dosage is dispensed and helping women understand their anemia status.
